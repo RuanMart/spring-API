@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -27,31 +29,19 @@ public class CategoryResource {
     @GetMapping(value = "{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<CategoryDTO> findById(
-            @PathVariable Long id)
-    {
+            @PathVariable Long id) {
         CategoryDTO categoryDTO = categoryService.findById(id);
         return ResponseEntity.ok(categoryDTO);
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<CategoryDTO> create(@RequestBody CategoryDTO categoryDTO){
+        categoryDTO = categoryService.create(categoryDTO);
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}").buildAndExpand(categoryDTO.getId()).toUri();
+        return ResponseEntity.created(uri).body(categoryDTO);
+    }
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
