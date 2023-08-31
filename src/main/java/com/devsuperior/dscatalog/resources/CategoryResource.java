@@ -43,5 +43,19 @@ public class CategoryResource {
         return ResponseEntity.created(uri).body(categoryDTO);
     }
 
-}
+    @PutMapping(value = "{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<CategoryDTO> update(
+            @RequestBody CategoryDTO categoryDTO,
+            @PathVariable Long id) {
+        categoryDTO = categoryService.update(id, categoryDTO);
+        return ResponseEntity.ok(categoryDTO);
+    }
 
+    @DeleteMapping(value = "{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<CategoryDTO> delete(@PathVariable Long id) {
+        categoryService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}
