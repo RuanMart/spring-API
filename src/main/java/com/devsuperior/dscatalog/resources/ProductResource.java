@@ -1,7 +1,7 @@
 package com.devsuperior.dscatalog.resources;
 
-import com.devsuperior.dscatalog.DTO.CategoryDTO;
-import com.devsuperior.dscatalog.services.CategoryService;
+import com.devsuperior.dscatalog.DTO.ProductDTO;
+import com.devsuperior.dscatalog.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,62 +15,63 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/categories")
-public class CategoryResource {
+@RequestMapping("/products")
+public class ProductResource {
 
     @Autowired
-    private CategoryService categoryService;
+    private ProductService productService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Page<CategoryDTO>> pagedFindAll(
+    public ResponseEntity<Page<ProductDTO>> pagedFindAll(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage,
             @RequestParam(value = "direction", defaultValue = "DESC") String direction,
-            @RequestParam(value = "orderBy", defaultValue = "createdAt") String orderBy
-    ) {
+            @RequestParam(value = "orderBy", defaultValue = "date") String orderBy
+    ){
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
-        Page<CategoryDTO> categories = categoryService.pagedFind(pageRequest);
-        return ResponseEntity.ok(categories);
+        Page<ProductDTO> products = productService.pagedFindAll(pageRequest);
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping(value = "/all")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<CategoryDTO>>  findAll() {
-        List<CategoryDTO>  categories = categoryService.findAll();
-        return ResponseEntity.ok(categories);
+    public ResponseEntity<List<ProductDTO>> findAll() {
+        List<ProductDTO> products = productService.findAll();
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping(value = "{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<CategoryDTO> findById(
-            @PathVariable Long id) {
-        CategoryDTO categoryDTO = categoryService.findById(id);
-        return ResponseEntity.ok(categoryDTO);
+    public ResponseEntity<ProductDTO> findById(
+            @PathVariable Long id
+    ) {
+        ProductDTO product = productService.findById(id);
+        return ResponseEntity.ok(product);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<CategoryDTO> create(@RequestBody CategoryDTO categoryDTO){
-        categoryDTO = categoryService.create(categoryDTO);
+    public ResponseEntity<ProductDTO> create(@RequestBody ProductDTO productDTO) {
+        productDTO = productService.create(productDTO);
         URI uri = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}").buildAndExpand(categoryDTO.getId()).toUri();
-        return ResponseEntity.created(uri).body(categoryDTO);
+                .fromCurrentRequest().path("{id}").buildAndExpand(productDTO.getId()).toUri();
+        return ResponseEntity.created(uri).body(productDTO);
     }
 
     @PutMapping(value = "{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<CategoryDTO> update(
-            @RequestBody CategoryDTO categoryDTO,
+    public ResponseEntity<ProductDTO> update(
+            @RequestBody ProductDTO productDTO,
             @PathVariable Long id) {
-        categoryDTO = categoryService.update(id, categoryDTO);
-        return ResponseEntity.ok(categoryDTO);
+        productDTO = productService.update(id, productDTO);
+        return ResponseEntity.ok(productDTO);
     }
 
     @DeleteMapping(value = "{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<CategoryDTO> delete(@PathVariable Long id) {
-        categoryService.delete(id);
+    public ResponseEntity<ProductDTO> delete(@PathVariable Long id) {
+        productService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

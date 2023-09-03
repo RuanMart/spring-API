@@ -1,8 +1,8 @@
 package com.devsuperior.dscatalog.resources.exceptions;
 
 import com.devsuperior.dscatalog.services.exception.DataBaseException;
-import com.devsuperior.dscatalog.services.exception.ResourceAlreadyExists;
-import com.devsuperior.dscatalog.services.exception.ResourceNotFoundException;
+import com.devsuperior.dscatalog.services.exception.RecordAlreadyExistsException;
+import com.devsuperior.dscatalog.services.exception.RecordNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +14,14 @@ import java.time.Instant;
 @ControllerAdvice
 public class ResourceExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<StandardError> entityNotFound
-            (ResourceNotFoundException e, HttpServletRequest request) {
+    @ExceptionHandler(RecordNotFoundException.class)
+    public ResponseEntity<StandardError> recordNotFound
+            (RecordNotFoundException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
         StandardError error = new StandardError();
         error.setTimestamp(Instant.now());
         error.setStatus(status.value());
-        error.setError("Entity not found");
+        error.setError("record not found");
         error.setMessage(e.getMessage());
         error.setPath(request.getRequestURI());
         return ResponseEntity.status(status).body(error);
@@ -40,14 +40,14 @@ public class ResourceExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
-    @ExceptionHandler(ResourceAlreadyExists.class)
-    public ResponseEntity<StandardError> alreadyExists
-            (ResourceAlreadyExists e, HttpServletRequest request) {
+    @ExceptionHandler(RecordAlreadyExistsException.class)
+    public ResponseEntity<StandardError> recordAlreadyExists
+            (RecordAlreadyExistsException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         StandardError error = new StandardError();
         error.setTimestamp(Instant.now());
         error.setStatus(status.value());
-        error.setError("Resource already exists");
+        error.setError("Record already exists");
         error.setMessage(e.getMessage());
         error.setPath(request.getRequestURI());
         return ResponseEntity.status(status).body(error);

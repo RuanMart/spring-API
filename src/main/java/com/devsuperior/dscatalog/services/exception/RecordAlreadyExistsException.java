@@ -2,11 +2,11 @@ package com.devsuperior.dscatalog.services.exception;
 
 import java.io.Serial;
 
-public class ResourceAlreadyExists extends RuntimeException{
+public class RecordAlreadyExistsException extends RuntimeException{
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public ResourceAlreadyExists(String msg) {
+    public RecordAlreadyExistsException(String msg) {
         super(msg);
     }
 }

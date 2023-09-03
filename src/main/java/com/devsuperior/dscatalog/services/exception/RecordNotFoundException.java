@@ -2,11 +2,11 @@ package com.devsuperior.dscatalog.services.exception;
 
 import java.io.Serial;
 
-public class ResourceNotFoundException extends RuntimeException{
+public class RecordNotFoundException extends RuntimeException{
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public ResourceNotFoundException(String msg) {
+    public RecordNotFoundException(String msg) {
         super(msg);
     }
 }
