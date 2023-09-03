@@ -1,7 +1,10 @@
 package com.devsuperior.dscatalog.services;
 
+import com.devsuperior.dscatalog.DTO.CategoryDTO;
 import com.devsuperior.dscatalog.DTO.ProductDTO;
+import com.devsuperior.dscatalog.entities.Category;
 import com.devsuperior.dscatalog.entities.Product;
+import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.repositories.ProductRepository;
 import com.devsuperior.dscatalog.services.exception.DataBaseException;
 import com.devsuperior.dscatalog.services.exception.RecordAlreadyExistsException;
@@ -23,6 +26,9 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
     public List<ProductDTO> findAll() {
@@ -49,10 +55,10 @@ public class ProductService {
     public ProductDTO create(ProductDTO productDTO) {
         List<Product> foundCategory = productRepository.findByName(productDTO.getName());
         if (foundCategory.isEmpty()) {
-            Product entity = new Product();
-            entity.setName(productDTO.getName());
-            entity = productRepository.save(entity);
-            return new ProductDTO(entity);
+            Product product = new Product();
+            dtoToEntity(productDTO, product);
+            product = productRepository.save(product);
+            return new ProductDTO(product);
         } else {
             throw new RecordAlreadyExistsException("Esse produto já existe já existe");
         }
@@ -61,14 +67,9 @@ public class ProductService {
     @Transactional
     public ProductDTO update(Long id, ProductDTO productDTO){
         try {
-             Product entity = productRepository.getReferenceById(id);
-             entity.setName(productDTO.getName());
-             entity.setDescription(productDTO.getDescription());
-             entity.setPrice(productDTO.getPrice());
-             entity.setImgUrl(productDTO.getImgUrl());
-             entity.setDate(productDTO.getDate());
-             entity = productRepository.save(entity);
-             return new ProductDTO(entity);
+             Product product = productRepository.getReferenceById(id);
+             dtoToEntity(productDTO, product);
+             return new ProductDTO(product);
         } catch (EntityNotFoundException e) {
             throw new RecordNotFoundException("Produto não encontrado " + id);
         }
@@ -84,5 +85,19 @@ public class ProductService {
         } catch (DataIntegrityViolationException e) {
             throw new DataBaseException("Violação de integridade de dados");
        }
+    }
+
+    private void dtoToEntity(ProductDTO productDTO, Product productEntity){
+        productEntity.setDescription(productDTO.getDescription());
+        productEntity.setImgUrl(productDTO.getImgUrl());
+        productEntity.setPrice(productDTO.getPrice());
+        productEntity.setName(productDTO.getName());
+        productEntity.setDate(productDTO.getDate());
+        productEntity.getCategories().clear();
+        for (CategoryDTO categoryDTO : productDTO.getCategories()){
+            Category category = categoryRepository.getReferenceById(categoryDTO.getId());
+            productEntity.getCategories().add(category);
+        }
+
     }
 }
