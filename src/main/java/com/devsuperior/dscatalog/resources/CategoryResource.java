@@ -26,8 +26,8 @@ public class CategoryResource {
     public ResponseEntity<Page<CategoryDTO>> pagedFindAll(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage,
-            @RequestParam(value = "orderBy", defaultValue = "moment") String orderBy,
-            @RequestParam(value = "direction", defaultValue = "DESC") String direction
+            @RequestParam(value = "direction", defaultValue = "DESC") String direction,
+            @RequestParam(value = "orderBy", defaultValue = "createdAt") String orderBy
     ) {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
         Page<CategoryDTO> categories = categoryService.pagedFindAll(pageRequest);
